@@ -113,8 +113,15 @@ def install_exception_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(exceptions.RaiseError)
     async def _on_raise(_: Request, exc: exceptions.RaiseError) -> JSONResponse:
-        # RAISE EXCEPTION в plpgsql
-        return _format(status.HTTP_400_BAD_REQUEST, "db_business_error", str(exc))
+        # RAISE EXCEPTION в plpgsql.
+        # Если сообщение явно говорит о пересечении/занятости номера —
+        # отдаём семантически корректный 409 Conflict.
+        msg = str(exc)
+        lower = msg.lower()
+        overlap_markers = ("занят", "забронир", "пересек", "конфликт", "overlap")
+        if any(m in lower for m in overlap_markers):
+            return _format(status.HTTP_409_CONFLICT, "overlap", msg)
+        return _format(status.HTTP_400_BAD_REQUEST, "db_business_error", msg)
 
     @app.exception_handler(PostgresError)
     async def _on_pg(_: Request, exc: PostgresError) -> JSONResponse:
