@@ -1,0 +1,1 @@
+"""Hotel management server package."""

@@ -200,4 +200,36 @@ $$;
 COMMENT ON FUNCTION sp_get_user_bookings(bigint) IS
     'Возвращает бронирования конкретного пользователя.';
 
+-- ---------------------------------------------------------------------------
+--  fn_create_booking — функциональная обёртка над sp_create_booking,
+--  чтобы asyncpg удобно получал booking_id и total_price из RETURNING.
+-- ---------------------------------------------------------------------------
+DROP FUNCTION IF EXISTS fn_create_booking(bigint, bigint, date, date, smallint, integer[]) CASCADE;
+
+CREATE OR REPLACE FUNCTION fn_create_booking(
+    p_user_id      bigint,
+    p_room_id      bigint,
+    p_check_in     date,
+    p_check_out    date,
+    p_guests_count smallint,
+    p_service_ids  integer[]
+)
+RETURNS TABLE (booking_id bigint, total_price positive_money)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_total positive_money;
+    v_book_id bigint;
+BEGIN
+    CALL sp_create_booking(p_user_id, p_room_id, p_check_in, p_check_out,
+                           p_guests_count, p_service_ids, v_book_id, v_total);
+    booking_id  := v_book_id;
+    total_price := v_total;
+    RETURN NEXT;
+END;
+$$;
+
+COMMENT ON FUNCTION fn_create_booking(bigint, bigint, date, date, smallint, integer[]) IS
+    'Функциональная обёртка над sp_create_booking. Удобна для драйверов, не поддерживающих OUT-параметры процедур.';
+
 \echo '<<< 06_procedures.sql ok'
