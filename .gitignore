@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Env
+.env
+.env.local
+*.env
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# DB / dumps
+*.sqlite3
+*.db
+*.dump
+
+# Flet build artifacts
+build/
+storage/
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS
+Thumbs.db
