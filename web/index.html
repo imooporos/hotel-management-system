@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HotelMS — Система управления гостиницей</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <!-- Навигация -->
+    <nav id="navbar" class="navbar">
+        <div class="nav-brand">
+            <i class="fas fa-hotel"></i>
+            <span>HotelMS</span>
+        </div>
+        <div class="nav-links" id="navLinks"></div>
+        <div class="nav-user" id="navUser"></div>
+    </nav>
+
+    <!-- Основной контент -->
+    <main id="app" class="container">
+        <!-- Динамический контент -->
+    </main>
+
+    <!-- Модальное окно -->
+    <div id="modal" class="modal hidden">
+        <div class="modal-overlay" onclick="closeModal()"></div>
+        <div class="modal-content" id="modalContent"></div>
+    </div>
+
+    <!-- Уведомления -->
+    <div id="toasts" class="toast-container"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
