@@ -86,7 +86,9 @@ def home_view(
                     alignment=ft.alignment.center,
                 )
             ]
-        grid.update()
+        # обновлять можно только после монтирования в page
+        if grid.page is not None:
+            grid.update()
 
     # ---- Filters UI ----
 

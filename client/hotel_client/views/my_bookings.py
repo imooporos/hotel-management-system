@@ -47,7 +47,8 @@ def my_bookings_view(state: AppState, p: Palette) -> ft.Control:
                 )
                 for b in bookings
             ]
-        container.update()
+        if container.page is not None:
+            container.update()
 
     def download_pdf(booking_id: int):
         try:

@@ -107,7 +107,8 @@ def _bookings_tab(state: AppState, p: Palette) -> ft.Control:
                 ])
             )
         table.rows = rows
-        table.update()
+        if table.page is not None:
+            table.update()
 
     body = ft.Column(
         [
@@ -228,7 +229,8 @@ def _users_tab(state: AppState, p: Palette) -> ft.Control:
                 ft.DataCell(_action_btn(p, "Сохранить", ft.Icons.SAVE_OUTLINED, save)),
             ]))
         table.rows = rows
-        table.update()
+        if table.page is not None:
+            table.update()
 
     body = ft.Column(
         [
@@ -308,7 +310,8 @@ def _reports_tab(state: AppState, p: Palette) -> ft.Control:
                 ft.DataCell(ft.Text(fmt_money(r["revenue_paid"]), color=p.text_muted)),
             ]) for r in data
         ]
-        revenue_table.update()
+        if revenue_table.page is not None:
+            revenue_table.update()
 
     def load_occupancy():
         try:
@@ -317,11 +320,13 @@ def _reports_tab(state: AppState, p: Palette) -> ft.Control:
             show_toast(state.page, exc.message, p=p, kind="danger")
             return
         occupancy_text.value = f"{data['occupancy_pct']:.1f}%"
-        occupancy_text.update()
+        if occupancy_text.page is not None:
+            occupancy_text.update()
         occupancy_meta.value = (
             f"за период {data['period_start']} — {data['period_end']}"
         )
-        occupancy_meta.update()
+        if occupancy_meta.page is not None:
+            occupancy_meta.update()
 
     def download(kind: str, e):
         try:
@@ -497,7 +502,8 @@ def _audit_tab(state: AppState, p: Palette) -> ft.Control:
                 ft.DataCell(ft.Text(entry.get("actor_name") or "—", color=p.text)),
             ]))
         table.rows = rows
-        table.update()
+        if table.page is not None:
+            table.update()
 
     table_select.on_change = lambda e: reload()
     body = ft.Column(
