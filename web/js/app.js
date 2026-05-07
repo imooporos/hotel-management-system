@@ -498,7 +498,7 @@ async function viewBookingDetail(id) {
             ${b.services && b.services.length ? `
                 <h4 style="margin:16px 0 8px">Дополнительные услуги</h4>
                 <table><thead><tr><th>Услуга</th><th>Кол-во</th><th>Цена</th></tr></thead>
-                <tbody>${b.services.map(s => `<tr><td>${s.service_name || s.service_id}</td><td>${s.quantity}</td><td>${formatMoney(s.price_at_booking)}</td></tr>`).join('')}</tbody></table>
+                <tbody>${b.services.map(s => `<tr><td>${s.name || s.service_name || s.service_id}</td><td>${s.quantity}</td><td>${formatMoney(s.price || s.price_at_booking)}</td></tr>`).join('')}</tbody></table>
             ` : ''}
             <div style="margin-top:16px;display:flex;gap:8px">
                 <button class="btn btn-outline" onclick="downloadPdf(${b.id})"><i class="fas fa-file-pdf"></i> Скачать PDF</button>
