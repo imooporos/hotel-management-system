@@ -27,6 +27,7 @@
 | СУБД         | **PostgreSQL 16** (домены, ENUM, представления, функции, процедуры, триггеры) |
 | Backend      | Python 3.13, **FastAPI**, asyncpg, Pydantic v2, PyJWT, bcrypt              |
 | Клиент       | Python 3.13, **Flet** (кроссплатформенный — Desktop / Web / iOS / Android) |
+| Веб-клиент   | HTML5, CSS3 (переменные, адаптив), **Vanilla JavaScript** (SPA)            |
 | Аутентификация| OAuth2 Password flow + JWT (HS256), bcrypt-хэширование паролей           |
 | Транспорт    | HTTP/JSON REST API, TLS терминируется на Nginx                             |
 | Отчёты       | ReportLab → PDF (распечатка бланка заказа, отчёт по бронированиям)         |
@@ -36,15 +37,16 @@
 ## Архитектура
 
 ```
-┌──────────────────────────────────┐
-│  Клиент Flet (Desktop / Mobile)  │
-│  - Личный кабинет                │
-│  - Каталог номеров               │
-│  - Бронирование, печать заказа   │
-│  - Админ-панель                  │
-└──────────────┬───────────────────┘
-               │ HTTPS / JSON
-               ▼
+┌──────────────────────────────────┐    ┌──────────────────────────────────┐
+│  Клиент Flet (Desktop / Mobile)  │    │  Веб-клиент (HTML/CSS/JS SPA)    │
+│  - Личный кабинет                │    │  - Авторизация / Регистрация     │
+│  - Каталог номеров               │    │  - Каталог номеров, фильтры      │
+│  - Бронирование, печать заказа   │    │  - Бронирование, PDF-бланк       │
+│  - Админ-панель                  │    │  - Профиль, Админ-панель         │
+└──────────────┬───────────────────┘    └──────────────┬───────────────────┘
+               │ HTTPS / JSON                          │ HTTPS / JSON
+               └───────────────┬───────────────────────┘
+                               ▼
 ┌──────────────────────────────────┐
 │  Nginx (reverse proxy, TLS)      │
 └──────────────┬───────────────────┘
@@ -97,7 +99,7 @@
 │   ├── pyproject.toml
 │   └── README.md
 │
-├── client/                  Клиентское приложение Flet
+├── client/                  Клиентское приложение Flet (Desktop)
 │   ├── hotel_client/
 │   │   ├── main.py          Точка входа клиента
 │   │   ├── api.py           HTTP-клиент к серверу
@@ -105,6 +107,13 @@
 │   │   ├── views/           Экраны (login, rooms, profile, admin, …)
 │   │   └── components/      Переиспользуемые UI-компоненты
 │   ├── pyproject.toml
+│   └── README.md
+│
+├── web/                     Веб-клиент (SPA, Vanilla JS)
+│   ├── index.html           Главная HTML-страница
+│   ├── css/style.css        Стили (CSS-переменные, адаптив)
+│   ├── js/api.js            HTTP-клиент REST API
+│   ├── js/app.js            Логика SPA (навигация, рендеринг)
 │   └── README.md
 │
 ├── docs/                    Документация курсового проекта
@@ -201,7 +210,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 API будет доступен по адресу `http://localhost:8000`, документация Swagger — `http://localhost:8000/docs`.
 
-### 3. Клиент
+### 3. Десктоп-клиент (Flet)
 
 ```bash
 cd client
@@ -210,21 +219,28 @@ pip install -e .
 HOTEL_API_URL=http://localhost:8000 python -m hotel_client.main
 ```
 
+### 4. Веб-клиент (браузер)
+
+Веб-клиент автоматически обслуживается FastAPI-сервером. После запуска бэкенда откройте `http://localhost:8000` в браузере.
+
+Подробнее — [web/README.md](web/README.md).
+
 ## Развёрнутый сервер
 
 Тестовый сервер курсового проекта развёрнут на:
 
 - **Хост**: `77.221.151.85`
-- **API**: `http://77.221.151.85/api` (за reverse proxy nginx)
-- **Документация Swagger**: `http://77.221.151.85/api/docs`
+- **Веб-приложение**: `http://77.221.151.85:8000` (открыть в браузере)
+- **API**: `http://77.221.151.85:8000/api`
+- **Документация Swagger**: `http://77.221.151.85:8000/docs`
 
 Тестовые учётные записи (см. `pg_scripts/08_seed_data.sql`):
 
 | Роль    | Email                   | Пароль          |
 |---------|-------------------------|-----------------|
-| admin   | admin@hotel.local       | Admin_2026!     |
-| manager | manager@hotel.local     | Manager_2026!   |
-| guest   | ivanov@example.com      | Guest_2026!     |
+| admin   | admin@hotel.local       | Admin123!       |
+| manager | manager@hotel.local     | Manager123!     |
+| guest   | ivanov@example.com      | Guest123!       |
 
 ## Документация
 
@@ -239,6 +255,7 @@ HOTEL_API_URL=http://localhost:8000 python -m hotel_client.main
 7. [Руководство администратора](docs/07_admin_guide.md)
 8. [Тест-кейсы](docs/08_test_cases.md)
 9. [API Reference](docs/api_reference.md)
+10. [Веб-клиент](web/README.md)
 
 ## Лицензия
 

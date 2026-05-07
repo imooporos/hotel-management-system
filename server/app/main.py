@@ -3,11 +3,15 @@ Hotel Management API — главный модуль FastAPI-приложени�
 """
 
 import logging
+import os
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 import asyncpg
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 from app.core.config import settings
 from app.core.database import create_pool, close_pool
@@ -59,13 +63,26 @@ app.include_router(services.router)
 app.include_router(reports.router)
 
 
-@app.get("/", tags=["Здоровье"])
-async def root():
-    return {
-        "service": "Hotel Management API",
-        "version": settings.APP_VERSION,
-        "status": "running",
-    }
+# Веб-клиент: отдаём статические файлы из web/
+WEB_DIR = Path(__file__).resolve().parent.parent.parent / "web"
+if not WEB_DIR.exists():
+    WEB_DIR = Path(os.environ.get("WEB_DIR", "/root/web"))
+
+if WEB_DIR.exists():
+    app.mount("/css", StaticFiles(directory=str(WEB_DIR / "css")), name="css")
+    app.mount("/js", StaticFiles(directory=str(WEB_DIR / "js")), name="js")
+
+    @app.get("/", tags=["Веб-клиент"], include_in_schema=False)
+    async def serve_index():
+        return FileResponse(str(WEB_DIR / "index.html"))
+else:
+    @app.get("/", tags=["Здоровье"])
+    async def root():
+        return {
+            "service": "Hotel Management API",
+            "version": settings.APP_VERSION,
+            "status": "running",
+        }
 
 
 @app.get("/health", tags=["Здоровье"])
