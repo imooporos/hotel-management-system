@@ -5,13 +5,13 @@
 -- =============================================================================
 
 -- Пользователи
--- Пароли: Admin_2026!, Manager_2026!, Guest_2026!
+-- Пароли: Admin123!, Manager123!, Guest123!
 INSERT INTO users (email, password_hash, role) VALUES
-('admin@hotel.local',   '$2b$12$LJ3m4ys3uz2GJQ.bLZP9t.GpSJNd5wPaRcnMoh/VJKElJsPRCsDQa', 'admin'),
-('manager@hotel.local', '$2b$12$LJ3m4ys3uz2GJQ.bLZP9t.GpSJNd5wPaRcnMoh/VJKElJsPRCsDQa', 'manager'),
-('ivanov@example.com',  '$2b$12$LJ3m4ys3uz2GJQ.bLZP9t.GpSJNd5wPaRcnMoh/VJKElJsPRCsDQa', 'guest'),
-('petrova@example.com', '$2b$12$LJ3m4ys3uz2GJQ.bLZP9t.GpSJNd5wPaRcnMoh/VJKElJsPRCsDQa', 'guest'),
-('sidorov@example.com', '$2b$12$LJ3m4ys3uz2GJQ.bLZP9t.GpSJNd5wPaRcnMoh/VJKElJsPRCsDQa', 'guest');
+('admin@hotel.local',   '$2b$12$zCgCuCnarpmuDUK.cEu/8.aNUXM8jvbnJDlmf9vRCiI.L0sYgzQ9a', 'admin'),
+('manager@hotel.local', '$2b$12$4LnANxH8Z1RR5zS1j5z3P.i88IZJ5P0Wu/iESeHnXsDWpkGmAolDK', 'manager'),
+('ivanov@example.com',  '$2b$12$zxuGBhzFrY30G2gQrOFzBu9rFKw9a/FPYf7f7vOUrhK51xnHuN84y', 'guest'),
+('petrova@example.com', '$2b$12$zxuGBhzFrY30G2gQrOFzBu9rFKw9a/FPYf7f7vOUrhK51xnHuN84y', 'guest'),
+('sidorov@example.com', '$2b$12$zxuGBhzFrY30G2gQrOFzBu9rFKw9a/FPYf7f7vOUrhK51xnHuN84y', 'guest');
 
 -- Профили гостей
 INSERT INTO guest_profiles (user_id, first_name, last_name, patronymic, phone, passport_series, passport_number, birth_date) VALUES
