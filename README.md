@@ -108,18 +108,17 @@
 │   └── README.md
 │
 ├── docs/                    Документация курсового проекта
-│   ├── 01_problem_statement.md
-│   ├── 02_database_design.md
-│   ├── 03_db_objects.md
-│   ├── 04_application_design.md
-│   ├── 05_security.md
-│   ├── 06_user_guide.md
-│   ├── 07_admin_guide.md
-│   ├── 08_test_cases.md
-│   ├── api_reference.md
+│   ├── architecture.md      Архитектура приложения
+│   ├── security.md          Методы защиты данных
+│   ├── user_guide.md        Руководство пользователя
+│   ├── admin_guide.md       Руководство администратора
 │   └── screenshots/
 │
-└── .github/workflows/       CI: линт, тесты
+├── tests/                   pytest: 5 тест-кейсов + 2 юнит-теста
+│   ├── unit/
+│   ├── integration/
+│   └── conftest.py
+└── README.md
 ```
 
 ## Функционал
@@ -168,10 +167,10 @@
 | Представления    | 4      | `v_room_availability`, `v_guest_bookings`, `v_revenue_by_category`, `v_active_bookings` |
 | Функции          | 3      | `fn_room_is_free`, `fn_calculate_booking_total`, `fn_occupancy_rate` |
 | Процедуры        | 5      | `sp_create_booking`, `sp_update_booking_status`, `sp_cancel_booking`, `sp_register_user`, `sp_get_user_bookings` |
-| Триггеры         | 3      | `trg_no_overlap_booking`, `trg_audit_bookings`, `trg_update_room_status` |
-| RLS-политики     | 2      | владелец видит свои бронирования, админ видит всё |
+| Триггеры         | 5      | `trg_set_updated_at`, `trg_no_overlap_booking`, `trg_update_room_status`, `trg_audit_bookings`, `trg_audit_users`, `trg_audit_rooms` |
+| RLS-политики     | 2      | владелец видит свои бронирования, менеджер/админ — все |
 
-Подробное описание — в [docs/03_db_objects.md](docs/03_db_objects.md).
+Подробное описание SQL-объектов — в [pg_scripts/](pg_scripts/) (по одному файлу на тип объекта).
 
 ## Запуск проекта
 
@@ -207,7 +206,8 @@ API будет доступен по адресу `http://localhost:8000`, до�
 cd client
 python3.13 -m venv .venv && source .venv/bin/activate
 pip install -e .
-HOTEL_API_URL=http://localhost:8000 python -m hotel_client.main
+HOTEL_API_URL=http://localhost:8000 python -m hotel_client          # native окно
+HOTEL_API_URL=http://localhost:8000 python -m hotel_client --web    # в браузере
 ```
 
 ## Развёрнутый сервер
@@ -215,8 +215,9 @@ HOTEL_API_URL=http://localhost:8000 python -m hotel_client.main
 Тестовый сервер курсового проекта развёрнут на:
 
 - **Хост**: `77.221.151.85`
-- **API**: `http://77.221.151.85/api` (за reverse proxy nginx)
-- **Документация Swagger**: `http://77.221.151.85/api/docs`
+- **API**: `http://77.221.151.85/` (за reverse proxy nginx)
+- **Документация Swagger**: http://77.221.151.85/docs
+- **Health-check**: http://77.221.151.85/health
 
 Тестовые учётные записи (см. `pg_scripts/08_seed_data.sql`):
 
@@ -228,17 +229,14 @@ HOTEL_API_URL=http://localhost:8000 python -m hotel_client.main
 
 ## Документация
 
-Полная пояснительная записка курсового проекта — в каталоге [docs/](docs/):
-
-1. [Постановка задачи](docs/01_problem_statement.md)
-2. [Проектирование БД](docs/02_database_design.md)
-3. [Объекты БД](docs/03_db_objects.md)
-4. [Проектирование приложения](docs/04_application_design.md)
-5. [Методы защиты данных](docs/05_security.md)
-6. [Руководство пользователя](docs/06_user_guide.md)
-7. [Руководство администратора](docs/07_admin_guide.md)
-8. [Тест-кейсы](docs/08_test_cases.md)
-9. [API Reference](docs/api_reference.md)
+- [Архитектура](docs/architecture.md) — высокоуровневая схема, потоки данных, стек
+- [Методы защиты данных](docs/security.md) — bcrypt, JWT, RBAC, RLS, аудит, защита от SQLi/XSS/CSRF
+- [Руководство пользователя](docs/user_guide.md) — пошаговые сценарии для гостя/менеджера/админа
+- [Руководство администратора](docs/admin_guide.md) — деплой, обслуживание, бэкапы
+- [Тесты](tests/README.md) — 5 тест-кейсов + 2 юнит-теста
+- [SQL-скрипты](pg_scripts/) — все DDL/DML файлы (нумерованы по этапам)
+- [Backend](server/README.md) — FastAPI бекенд
+- [Клиент](client/README.md) — Flet клиент
 
 ## Лицензия
 
