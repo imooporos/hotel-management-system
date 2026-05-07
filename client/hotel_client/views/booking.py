@@ -142,12 +142,16 @@ def booking_view(
 
     # ---- Recalculate ----
 
+    def _safe_update(*controls):
+        for c in controls:
+            if c.page is not None:
+                c.update()
+
     def recalc():
         if selected["check_out"] <= selected["check_in"]:
             is_free_chip.content = ft.Text("Дата выезда должна быть позже заезда", color=p.danger, size=Sizing.caption)
-            is_free_chip.update()
             total_text.value = "—"
-            total_text.update()
+            _safe_update(is_free_chip, total_text)
             return
         try:
             data = state.api.calculate_booking(
@@ -158,7 +162,7 @@ def booking_view(
             )
         except ApiError as exc:
             is_free_chip.content = ft.Text(exc.message, color=p.danger, size=Sizing.caption)
-            is_free_chip.update()
+            _safe_update(is_free_chip)
             return
 
         nights = data["nights"]
@@ -166,11 +170,9 @@ def booking_view(
             status_chip("Свободно", p=p, kind="success") if data["is_room_free"]
             else status_chip("Занято — выберите другие даты", p=p, kind="danger")
         )
-        is_free_chip.update()
         nights_text.value = f"{nights} ночей × {fmt_money(room['price_per_night'])}"
-        nights_text.update()
         total_text.value = fmt_money(data["total_price"])
-        total_text.update()
+        _safe_update(is_free_chip, nights_text, total_text)
 
     def submit(e):
         error_text.value = ""
@@ -185,7 +187,7 @@ def booking_view(
             )
         except ApiError as exc:
             error_text.value = exc.message
-            error_text.update()
+            _safe_update(error_text)
             show_toast(state.page, exc.message, p=p, kind="danger")
             return
         show_toast(state.page, f"Бронь №{booking['booking_id']} создана", p=p, kind="success")
