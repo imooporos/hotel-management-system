@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hotel-management-client"
+version = "1.0.0"
+description = "Flet client for the hotel management course project"
+authors = [{ name = "imooporos" }]
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "flet>=0.25,<0.30",
+    "httpx>=0.27",
+    "pydantic>=2.7",
+]
+
+[tool.setuptools]
+packages = ["hotel_client", "hotel_client.components", "hotel_client.views"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
